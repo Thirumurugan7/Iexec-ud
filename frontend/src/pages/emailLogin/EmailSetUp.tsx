@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi';
 import { Address, AddressOrEnsName } from './utils/types.ts';
 import ProtectDataForm from './features/ProtectDataForm.tsx';
 import { IExecWeb3mail, type Contact } from '@iexec/web3mail';
+import { ethers } from 'ethers';
 
 const web3Provider = window.ethereum;
 const web3mail = new IExecWeb3mail(web3Provider);
@@ -18,7 +19,68 @@ const EmailSetUp = (props: Props) => {
     const [emailContent, setEmailContent] = useState<string>('');
     const [sending, setSending] = useState<boolean>(false);
     const [successMessage, setSuccessMessage] = useState<string>('');
+    const [currentChain, setCurrentChain] = useState<number | null>(null);
+    const [errorProtect, setErrorProtect] = useState('');
+
+    const switchNetwork = async (desiredChainId: number) => {
+      try {
+        const chainIdHex = `0x${desiredChainId.toString(16)}`;
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: chainIdHex }],
+        });
+        setCurrentChain(desiredChainId);
+      } catch (error: any) {
+        // If the chain is not added to MetaMask, prompt to add it
+        if (error.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainId: chainIdHex,
+                  chainName: 'iExec Sidechain', // Replace with actual chain name
+                  nativeCurrency: {
+                    name: 'XRLC', // e.g., 'ETH'
+                    symbol: 'XRLC', // e.g., 'ETH'
+                    decimals: 18,
+                  },
+                  rpcUrls: ['https://bellecour.iex.ec'], // Replace with actual RPC URL
+                  blockExplorerUrls: ['https://blockscout.bellecour.iex.ec'], // Replace with actual explorer URL
+                },
+              ],
+            });
+            setCurrentChain(desiredChainId);
+          } catch (addError) {
+            console.error('Failed to add network:', addError);
+            setErrorProtect('Failed to add network. ' + addError.message);
+          }
+        } else {
+          console.error('Failed to switch network:', error);
+          setErrorProtect('Failed to switch network. ' + error.message);
+        }
+      }
+    };
+    
   
+    useEffect(() => {
+      const checkNetwork = async () => {
+        if (window.ethereum) {
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          const { chainId } = await provider.getNetwork();
+          setCurrentChain(chainId);
+          if (chainId !== 134) {
+            // Switch to the correct chain (84532 in this example)
+            switchNetwork(134);
+          }
+        } else {
+          console.error('MetaMask is not installed');
+        }
+      };
+  
+      checkNetwork();
+    }, []);
+
     // useEffect(() => {
     //   if (isConnected) {
     //     fetchData();
