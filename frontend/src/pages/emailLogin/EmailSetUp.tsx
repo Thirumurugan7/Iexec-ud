@@ -31,22 +31,18 @@ const EmailSetUp = (props: Props) => {
         });
         setCurrentChain(desiredChainId);
       } catch (error: any) {
-        // If the chain is not added to MetaMask, prompt to add it
         if (error.code === 4902) {
+        const chainIdHex = `0x${desiredChainId.toString(16)}`;
           try {
             await window.ethereum.request({
               method: 'wallet_addEthereumChain',
               params: [
                 {
                   chainId: chainIdHex,
-                  chainName: 'iExec Sidechain', // Replace with actual chain name
-                  nativeCurrency: {
-                    name: 'XRLC', // e.g., 'ETH'
-                    symbol: 'XRLC', // e.g., 'ETH'
-                    decimals: 18,
-                  },
-                  rpcUrls: ['https://bellecour.iex.ec'], // Replace with actual RPC URL
-                  blockExplorerUrls: ['https://blockscout.bellecour.iex.ec'], // Replace with actual explorer URL
+                  chainName: 'iExec Sidechain',
+                  nativeCurrency: { name: 'XRLC', symbol: 'XRLC', decimals: 18 },
+                  rpcUrls: ['https://bellecour.iex.ec'],
+                  blockExplorerUrls: ['https://blockscout.bellecour.iex.ec'],
                 },
               ],
             });
@@ -61,7 +57,6 @@ const EmailSetUp = (props: Props) => {
         }
       }
     };
-    
   
     useEffect(() => {
       const checkNetwork = async () => {
@@ -70,16 +65,14 @@ const EmailSetUp = (props: Props) => {
           const { chainId } = await provider.getNetwork();
           setCurrentChain(chainId);
           if (chainId !== 134) {
-            // Switch to the correct chain (84532 in this example)
             switchNetwork(134);
           }
         } else {
           console.error('MetaMask is not installed');
         }
       };
-  
       checkNetwork();
-    }, []);
+    }, []);  
 
     // useEffect(() => {
     //   if (isConnected) {

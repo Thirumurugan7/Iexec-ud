@@ -142,12 +142,12 @@ export default function ProtectDataForm({
           onChange={handleNameChange}
         />
       </div>
-      {/* {errorProtect && (
+      {errorProtect && (
         <div className="bg-red-100 text-red-700 p-4 rounded-md mb-4">
           <strong>Creation failed</strong>
           <p>{errorProtect}</p>
         </div>
-      )} */}
+      )}
       {!loadingProtect && (
         <button
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
