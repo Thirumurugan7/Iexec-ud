@@ -53,7 +53,7 @@ const App = () => {
   }, [account.address]);
 
   return (
-    <div>
+    <div className=''>
         <Routes>
           <Route path='/' element={account.isConnected && userExists === false ? <SelectionPage /> : <LandingPage />} />
           <Route path='/selection-page' element={<SelectionPage /> } />

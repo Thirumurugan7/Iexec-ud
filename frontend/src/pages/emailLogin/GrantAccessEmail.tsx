@@ -90,7 +90,7 @@ const GrantAccessEmail = (props: Props) => {
   };
 
   return (
-    <div className="container mx-auto pt-10 bg-gradient-to-tr from-[#06061E] via-[#06061E] to-blue-950 min-h-screen inter-font">
+    <div className="pt-10 bg-gradient-to-tr from-[#06061E] via-[#06061E] to-blue-950 min-h-screen inter-font">
       <div className="text-white font-bold text-4xl text-center">
         My Protected Data
       </div>
